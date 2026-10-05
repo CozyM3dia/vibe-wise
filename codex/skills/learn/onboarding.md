@@ -11,7 +11,7 @@ ask one plain-text question. Open-ended answers belong in chat.
 Briefly explain: learning comes first. Ask for their approach, then give feedback,
 explain unfamiliar concepts, and ask follow-ups where needed. Their reasoning shapes
 the design; AI writes the agreed implementation. Suggestions aren't an automatic next step.
-Notes live in .vibe-wise/. Recommend ignoring that directory in Git. Don't
+Notes live in .vibe-learn/ (or existing .vibe-wise/). Recommend ignoring that directory in Git. Don't
 change .gitignore unless requested; announce the edit first.
 
 ## Project

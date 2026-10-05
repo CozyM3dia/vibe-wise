@@ -4,7 +4,7 @@ description: Back up this project's learning notes and restart onboarding after 
 disable-model-invocation: true
 ---
 
-# Reset VibeWise learning
+# Reset VibeLearn learning
 
 Run this in the main conversation, only when explicitly invoked. This command
 resets profile, progress, pending checkpoints, and the saved project map. Source

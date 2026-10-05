@@ -1,11 +1,11 @@
 {
-  "name": "vibe-wise-local",
+  "name": "vibe-learn",
   "interface": {
-    "displayName": "VibeWise Local"
+    "displayName": "VibeLearn"
   },
   "plugins": [
     {
-      "name": "vibe-wise",
+      "name": "vibe-learn",
       "source": {
         "source": "local",
         "path": "./codex"

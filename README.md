@@ -43,20 +43,22 @@ Restart Claude Code in the project you want to work on, then run:
 
 Setup asks one question at a time. Use the arrow keys and Enter for choices; pick **Use defaults** to skip preference setup. Then ask Claude to build something. Starting fresh or joining an unfamiliar repository both work. For an existing repository, Claude first inspects the code and sketches a small system map.
 
-### Codex
+### Codex (VibeLearn)
 
-VibeWise provides a native plugin bundle for Codex in `codex/`.
+VibeLearn is the native Codex plugin for VibeWise, bundled in `codex/`.
 
-1. Add the local marketplace pointing to the repository root:
+1. Add the repository marketplace:
 
 ```sh
-codex plugin marketplace add .
+codex plugin marketplace add CozyM3dia/vibe-wise
 ```
+
+(Or `codex plugin marketplace add .` from a local clone.)
 
 2. Install the plugin:
 
 ```sh
-codex plugin add vibe-wise@vibe-wise-local
+codex plugin add vibe-learn@vibe-learn
 ```
 
 3. Review and trust the `SessionStart` context-restoration hook via `/hooks` in Codex.

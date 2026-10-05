@@ -1,4 +1,4 @@
-"""Tests for the native VibeWise Codex plugin bundle."""
+"""Tests for the native VibeLearn Codex plugin bundle."""
 
 import importlib.util
 import json
@@ -21,7 +21,7 @@ CONFIG = json.loads((CODEX_ROOT / "hooks/hooks.json").read_text(encoding="utf-8"
 REGISTRATION = CONFIG["hooks"]["SessionStart"][0]
 
 RESET_SCRIPT = CODEX_ROOT / "skills/reset/reset.py"
-spec = importlib.util.spec_from_file_location("codex_vibe_wise_reset", RESET_SCRIPT)
+spec = importlib.util.spec_from_file_location("codex_vibe_learn_reset", RESET_SCRIPT)
 reset_module = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(reset_module)
 
@@ -34,12 +34,12 @@ class CodexManifestsTest(unittest.TestCase):
         manifest_path = ROOT / ".agents/plugins/marketplace.json"
         self.assertTrue(manifest_path.is_file(), "Root marketplace.json must exist")
         data = json.loads(manifest_path.read_text(encoding="utf-8"))
-        self.assertEqual(data.get("name"), "vibe-wise-local")
-        self.assertEqual(data.get("interface", {}).get("displayName"), "VibeWise Local")
+        self.assertEqual(data.get("name"), "vibe-learn")
+        self.assertEqual(data.get("interface", {}).get("displayName"), "VibeLearn")
         plugins = data.get("plugins", [])
         self.assertEqual(len(plugins), 1)
         plugin = plugins[0]
-        self.assertEqual(plugin.get("name"), "vibe-wise")
+        self.assertEqual(plugin.get("name"), "vibe-learn")
         self.assertEqual(plugin.get("source"), {"source": "local", "path": "./codex"})
         self.assertEqual(plugin.get("policy"), {
             "installation": "AVAILABLE",
@@ -51,21 +51,21 @@ class CodexManifestsTest(unittest.TestCase):
         plugin_path = CODEX_ROOT / ".codex-plugin/plugin.json"
         self.assertTrue(plugin_path.is_file(), "Codex plugin.json must exist")
         data = json.loads(plugin_path.read_text(encoding="utf-8"))
-        self.assertEqual(data.get("name"), "vibe-wise")
-        self.assertEqual(data.get("version"), "0.1.43-codex.1")
+        self.assertEqual(data.get("name"), "vibe-learn")
+        self.assertEqual(data.get("version"), "0.1.0-codex.1")
         self.assertEqual(data.get("description"), "Mindful pair programming that keeps you in the driver's seat")
         self.assertEqual(data.get("skills"), "./skills/")
         self.assertEqual(data.get("hooks"), "./hooks/hooks.json")
         interface = data.get("interface", {})
-        self.assertEqual(interface.get("displayName"), "VibeWise")
+        self.assertEqual(interface.get("displayName"), "VibeLearn")
         self.assertEqual(interface.get("shortDescription"), "Mindful pair programming that keeps you in the driver's seat")
         self.assertEqual(interface.get("developerName"), "Noah Kim")
         self.assertEqual(interface.get("category"), "Productivity")
-        self.assertEqual(interface.get("composerIcon"), "./assets/vibewise-icon.png")
-        self.assertEqual(interface.get("logo"), "./assets/vibewise-icon.png")
+        self.assertEqual(interface.get("composerIcon"), "./assets/vibelearn-icon.png")
+        self.assertEqual(interface.get("logo"), "./assets/vibelearn-icon.png")
 
         # Verify referenced asset and license files exist in codex bundle
-        icon_path = CODEX_ROOT / "assets/vibewise-icon.png"
+        icon_path = CODEX_ROOT / "assets/vibelearn-icon.png"
         self.assertTrue(icon_path.is_file(), "Bundle asset icon must exist")
         license_path = CODEX_ROOT / "LICENSE"
         self.assertTrue(license_path.is_file(), "Bundle LICENSE must exist")
@@ -74,12 +74,12 @@ class CodexManifestsTest(unittest.TestCase):
     def test_skills_openai_manifests_and_policies(self):
         skills_expected = {
             "learn": {
-                "display_name": "VibeWise Learn",
+                "display_name": "VibeLearn",
                 "short_description": "Activate or resume learning-first development",
-                "default_prompt": "Use $learn to activate or resume learning-first development for this project.",
+                "default_prompt": "Use $learn to activate or resume learning-first development with VibeLearn for this project.",
             },
             "reset": {
-                "display_name": "Reset VibeWise Learning",
+                "display_name": "Reset VibeLearn Learning",
                 "short_description": "Back up learning notes and restart onboarding after confirmation",
                 "default_prompt": "Use $reset to preview and confirm resetting learning notes for this project.",
             },
@@ -106,20 +106,20 @@ class CodexManifestsTest(unittest.TestCase):
             frontmatter = yaml.safe_load(parts[1])
             self.assertEqual(frontmatter.get("name"), skill_name)
             self.assertTrue(frontmatter.get("disable-model-invocation"),
-                            f"{skill_name} frontmatter must disable model invocation")
+                             f"{skill_name} frontmatter must disable model invocation")
 
 
 class CodexHooksTest(unittest.TestCase):
     def setUp(self):
-        self.temp = tempfile.TemporaryDirectory(prefix="vibe-wise-codex-test-")
+        self.temp = tempfile.TemporaryDirectory(prefix="vibe-learn-codex-test-")
         self.addCleanup(self.temp.cleanup)
         self.root = Path(self.temp.name).resolve()
         self.project = self.root / "project with spaces"
         self.project.mkdir()
         (self.project / ".git").mkdir()
 
-    def state(self, project=None, mode="active"):
-        directory = (project or self.project) / ".vibe-wise"
+    def state(self, project=None, mode="active", dir_name=".vibe-learn"):
+        directory = (project or self.project) / dir_name
         directory.mkdir()
         (directory / "profile.md").write_text(
             f"# Learner Profile\nLearning mode: {mode}\nOnboarding: complete\n"
@@ -180,7 +180,7 @@ class CodexHooksTest(unittest.TestCase):
         self.assertEqual(hook_entry["type"], "command")
         self.assertIn("session_start.py", hook_entry["command"])
         self.assertEqual(hook_entry["timeout"], 5)
-        self.assertEqual(hook_entry.get("statusMessage"), "Loading VibeWise learning context")
+        self.assertEqual(hook_entry.get("statusMessage"), "Loading VibeLearn learning context")
 
     def test_fresh_project_is_inactive(self):
         self.assertIsNone(self.run_hook())
@@ -191,12 +191,27 @@ class CodexHooksTest(unittest.TestCase):
             with self.subTest(source=source):
                 context = self.context(source=source)
                 self.assertIn(str(CODEX_ROOT / "skills/learn/SKILL.md"), context)
-                self.assertIn(str(self.project / ".vibe-wise"), context)
+                self.assertIn(str(self.project / ".vibe-learn"), context)
+                self.assertIn("VibeLearn is active", context)
                 self.assertIn("Read profile.md and project-map.md", context)
                 self.assertIn("Search the entire progress.md", context)
                 # Ensure Codex wording is used, not Claude "use Read"
                 self.assertIn("load the Learn guide and its referenced behavior instructions", context)
                 self.assertNotIn("use Read", context)
+
+    def test_vibe_learn_state_directory_precedence(self):
+        # .vibe-learn preferred over .vibe-wise and .sensible-vibes
+        self.state(dir_name=".vibe-wise", mode="paused")
+        self.state(dir_name=".vibe-learn", mode="active")
+        context = self.context()
+        self.assertIn(str(self.project / ".vibe-learn"), context)
+
+    def test_vibe_wise_legacy_fallback(self):
+        # If .vibe-learn does not exist, .vibe-wise restores cleanly
+        self.state(dir_name=".vibe-wise", mode="active")
+        context = self.context()
+        self.assertIn(str(self.project / ".vibe-wise"), context)
+        self.assertIn("VibeLearn is active", context)
 
     def test_paused_state_not_reactivated_by_compact(self):
         self.state(mode="paused")
@@ -208,14 +223,14 @@ class CodexHooksTest(unittest.TestCase):
         state.rename(legacy)
         context = self.context(source="compact")
         self.assertIn(str(legacy), context)
-        self.assertIn("VibeWise is active", context)
+        self.assertIn("VibeLearn is active", context)
 
     def test_nested_working_directory_restores(self):
         self.state()
         nested = self.project / "nested" / "deep"
         nested.mkdir(parents=True)
         context = self.context(cwd=nested)
-        self.assertIn(str(self.project / ".vibe-wise"), context)
+        self.assertIn(str(self.project / ".vibe-learn"), context)
 
     def test_git_and_worktree_boundaries(self):
         self.state()
@@ -250,7 +265,7 @@ class CodexHooksTest(unittest.TestCase):
         state = self.state()
         real_is_symlink = Path.is_symlink
         def fake_is_symlink(path):
-            if path.name in ("profile.md", ".vibe-wise"):
+            if path.name in ("profile.md", ".vibe-learn", ".vibe-wise"):
                 return True
             return real_is_symlink(path)
         with patch.object(Path, "is_symlink", fake_is_symlink):
@@ -271,7 +286,7 @@ class CodexHooksTest(unittest.TestCase):
 
 class CodexResetTest(unittest.TestCase):
     def setUp(self):
-        self.temp = tempfile.TemporaryDirectory(prefix="vibe-wise-codex-reset-")
+        self.temp = tempfile.TemporaryDirectory(prefix="vibe-learn-codex-reset-")
         self.addCleanup(self.temp.cleanup)
         self.root = Path(self.temp.name).resolve()
         self.project = self.root / "project with spaces"
@@ -279,7 +294,7 @@ class CodexResetTest(unittest.TestCase):
         (self.project / ".git").mkdir()
 
     def notes(self, project=None, legacy=False):
-        state = (project or self.project) / (".sensible-vibes" if legacy else ".vibe-wise")
+        state = (project or self.project) / (".sensible-vibes" if legacy else ".vibe-learn")
         state.mkdir()
         originals = {
             "profile.md": b"Learning mode: paused\nOnboarding: complete\nAdvanced\n",

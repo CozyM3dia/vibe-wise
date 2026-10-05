@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Comprehensive verification script for VibeWise Codex port.
+"""Comprehensive verification script for VibeLearn Codex port.
 
 Performs static validation of manifests, assets, and configurations,
 followed by a live CLI smoke test with an isolated temporary CODEX_HOME
@@ -33,11 +33,11 @@ def verify_static():
     marketplace_file = ROOT / ".agents/plugins/marketplace.json"
     assert marketplace_file.is_file(), f"Missing {marketplace_file}"
     marketplace = json.loads(marketplace_file.read_text(encoding="utf-8"))
-    assert marketplace.get("name") == "vibe-wise-local", f"Unexpected name: {marketplace.get('name')}"
-    assert marketplace.get("interface", {}).get("displayName") == "VibeWise Local"
+    assert marketplace.get("name") == "vibe-learn", f"Unexpected name: {marketplace.get('name')}"
+    assert marketplace.get("interface", {}).get("displayName") == "VibeLearn"
     plugins = marketplace.get("plugins", [])
     assert len(plugins) == 1, f"Expected 1 plugin, got {len(plugins)}"
-    assert plugins[0].get("name") == "vibe-wise"
+    assert plugins[0].get("name") == "vibe-learn"
     assert plugins[0].get("source") == {"source": "local", "path": "./codex"}
     assert plugins[0].get("policy") == {"installation": "AVAILABLE", "authentication": "ON_INSTALL"}
     assert plugins[0].get("category") == "Productivity"
@@ -47,22 +47,22 @@ def verify_static():
     plugin_file = CODEX_ROOT / ".codex-plugin/plugin.json"
     assert plugin_file.is_file(), f"Missing {plugin_file}"
     plugin = json.loads(plugin_file.read_text(encoding="utf-8"))
-    assert plugin.get("name") == "vibe-wise"
-    assert plugin.get("version") == "0.1.43-codex.1"
+    assert plugin.get("name") == "vibe-learn"
+    assert plugin.get("version") == "0.1.0-codex.1"
     assert plugin.get("skills") == "./skills/"
     assert plugin.get("hooks") == "./hooks/hooks.json"
     interface = plugin.get("interface", {})
-    assert interface.get("displayName") == "VibeWise"
+    assert interface.get("displayName") == "VibeLearn"
     assert interface.get("shortDescription") == "Mindful pair programming that keeps you in the driver's seat"
     assert interface.get("developerName") == "Noah Kim"
     assert interface.get("category") == "Productivity"
-    assert interface.get("composerIcon") == "./assets/vibewise-icon.png"
-    assert interface.get("logo") == "./assets/vibewise-icon.png"
+    assert interface.get("composerIcon") == "./assets/vibelearn-icon.png"
+    assert interface.get("logo") == "./assets/vibelearn-icon.png"
     log("[OK] codex/.codex-plugin/plugin.json is valid")
 
     # 3. Assets and license
     assert (CODEX_ROOT / "LICENSE").is_file(), "Missing codex/LICENSE"
-    assert (CODEX_ROOT / "assets/vibewise-icon.png").is_file(), "Missing codex/assets/vibewise-icon.png"
+    assert (CODEX_ROOT / "assets/vibelearn-icon.png").is_file(), "Missing codex/assets/vibelearn-icon.png"
     log("[OK] Bundle LICENSE and icon assets exist")
 
     # 4. Hooks configuration
@@ -76,7 +76,7 @@ def verify_static():
     hook_entry = reg.get("hooks", [])[0]
     assert hook_entry.get("type") == "command"
     assert hook_entry.get("timeout") == 5
-    assert hook_entry.get("statusMessage") == "Loading VibeWise learning context"
+    assert hook_entry.get("statusMessage") == "Loading VibeLearn learning context"
     assert "session_start.py" in hook_entry.get("command")
     assert (CODEX_ROOT / "hooks/session_start.py").is_file(), "Missing codex/hooks/session_start.py"
     log("[OK] codex/hooks/hooks.json and session_start.py are valid")
@@ -123,7 +123,7 @@ def verify_live():
         env = dict(os.environ)
         env["CODEX_HOME"] = temp_dir
 
-        # 1. codex plugin marketplace add <repo-worktree-path>
+        # 1. codex plugin marketplace add <repo-path>
         log("Adding local marketplace...")
         res = subprocess.run([codex_bin, "plugin", "marketplace", "add", str(ROOT)],
                              capture_output=True, text=True, env=env, shell=(os.name == "nt"))
@@ -134,11 +134,11 @@ def verify_live():
         res = subprocess.run([codex_bin, "plugin", "marketplace", "list"],
                              capture_output=True, text=True, env=env, shell=(os.name == "nt"))
         assert res.returncode == 0, f"marketplace list failed: {res.stderr}"
-        assert "vibe-wise-local" in res.stdout, f"vibe-wise-local not listed: {res.stdout}"
+        assert "vibe-learn" in res.stdout, f"vibe-learn not listed: {res.stdout}"
 
-        # 3. codex plugin add vibe-wise@vibe-wise-local
-        log("Installing vibe-wise plugin...")
-        res = subprocess.run([codex_bin, "plugin", "add", "vibe-wise@vibe-wise-local"],
+        # 3. codex plugin add vibe-learn@vibe-learn
+        log("Installing vibe-learn plugin...")
+        res = subprocess.run([codex_bin, "plugin", "add", "vibe-learn@vibe-learn"],
                              capture_output=True, text=True, env=env, shell=(os.name == "nt"))
         assert res.returncode == 0, f"plugin add failed: {res.stderr}"
 
@@ -147,7 +147,7 @@ def verify_live():
         res = subprocess.run([codex_bin, "plugin", "list"],
                              capture_output=True, text=True, env=env, shell=(os.name == "nt"))
         assert res.returncode == 0, f"plugin list failed: {res.stderr}"
-        assert "vibe-wise@vibe-wise-local" in res.stdout, f"Plugin not installed: {res.stdout}"
+        assert "vibe-learn@vibe-learn" in res.stdout, f"Plugin not installed: {res.stdout}"
 
         # 5. codex app-server --stdio JSON-RPC inspection
         log("Testing app-server stdio JSON-RPC (skills/list & hooks/list)...")
@@ -179,11 +179,11 @@ def verify_live():
                     for entry in result.get("data", []):
                         for s in entry.get("skills", []):
                             name = s.get("name")
-                            if name in ("vibe-wise:learn", "vibe-wise:reset"):
+                            if name in ("vibe-learn:learn", "vibe-learn:reset"):
                                 skills_found.add(name)
                     break
-            assert "vibe-wise:learn" in skills_found, f"vibe-wise:learn not discovered: {skills_found}"
-            assert "vibe-wise:reset" in skills_found, f"vibe-wise:reset not discovered: {skills_found}"
+            assert "vibe-learn:learn" in skills_found, f"vibe-learn:learn not discovered: {skills_found}"
+            assert "vibe-learn:reset" in skills_found, f"vibe-learn:reset not discovered: {skills_found}"
             log("[OK] Discovered skills via JSON-RPC: " + ", ".join(sorted(skills_found)))
 
             # hooks/list
@@ -198,13 +198,13 @@ def verify_live():
                     result = data.get("result", {})
                     for entry in result.get("data", []):
                         for h in entry.get("hooks", []):
-                            if "vibe-wise" in h.get("pluginId", "") and h.get("eventName") == "sessionStart":
+                            if "vibe-learn" in h.get("pluginId", "") and h.get("eventName") == "sessionStart":
                                 hook_found = True
                                 assert h.get("trustStatus") == "untrusted", \
                                     f"Hook should remain untrusted until user review, got: {h.get('trustStatus')}"
                                 assert h.get("matcher") == "startup|resume|clear|compact"
                     break
-            assert hook_found, "VibeWise sessionStart hook was not reported by hooks/list"
+            assert hook_found, "VibeLearn sessionStart hook was not reported by hooks/list"
             log("[OK] Verified sessionStart hook reported with untrusted status until user review")
 
         finally:
@@ -226,7 +226,7 @@ def verify_live():
 
 
 def main():
-    log("Beginning VibeWise Codex verification...")
+    log("Beginning VibeLearn Codex verification...")
     verify_static()
     verify_live()
     log("All checks passed successfully!")

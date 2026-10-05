@@ -1,4 +1,4 @@
-# VibeWise for Codex
+# VibeLearn for Codex
 
 Mindful pair programming that keeps you in the driver's seat.
 
@@ -7,16 +7,22 @@ You lead the design; Codex gives feedback, explains concepts, asks follow-up que
 ## Requirements
 
 - [Codex CLI](https://github.com/openai/codex)
-- Python 3 (`python` on Windows, `python3` on Unix) — no third-party Python packages required.
+- Python 3 (`python` on Windows, `python3` on Unix) with no third-party Python dependencies needed.
 
 ## Installation
 
-### 1. Add the local marketplace
+### 1. Add the marketplace
 
 From this repository (or pointing to its root directory):
 
 ```sh
 codex plugin marketplace add .
+```
+
+Or directly via GitHub shorthand:
+
+```sh
+codex plugin marketplace add CozyM3dia/vibe-wise
 ```
 
 To verify the marketplace is registered:
@@ -27,10 +33,10 @@ codex plugin marketplace list
 
 ### 2. Install the plugin
 
-Install `vibe-wise` from the local marketplace (`vibe-wise-local`):
+Install `vibe-learn` from the marketplace:
 
 ```sh
-codex plugin add vibe-wise@vibe-wise-local
+codex plugin add vibe-learn@vibe-learn
 ```
 
 Verify installation:
@@ -41,9 +47,9 @@ codex plugin list
 
 ### 3. Review and trust the hook
 
-VibeWise registers a `SessionStart` hook (`codex/hooks/hooks.json`) that restores learning context at session start and after compaction. In Codex, hooks from newly installed plugins remain untrusted until user review.
+VibeLearn registers a `SessionStart` hook (`codex/hooks/hooks.json`) that restores learning context at session start and after compaction. In Codex, hooks from newly installed plugins remain untrusted until user review.
 
-Open `/hooks` in Codex, inspect the VibeWise hook:
+Open `/hooks` in Codex, inspect the VibeLearn hook:
 
 ```text
 python "${PLUGIN_ROOT}/hooks/session_start.py"
@@ -71,4 +77,4 @@ To back up existing learning notes and restart onboarding from scratch:
 $reset
 ```
 
-The command generates a preview with a snapshot confirmation token. Confirm in chat to create a timestamped backup in `.vibe-wise/backups/` and reset only learning notes. Your project code and Git history are never modified.
+The command generates a preview with a snapshot confirmation token. Confirm in chat to create a timestamped backup in `.vibe-learn/backups/` and reset only learning notes. Your project code and Git history are never modified.

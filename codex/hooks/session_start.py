@@ -42,7 +42,7 @@ def state_directory(cwd):
     # Starting in a source subdirectory should still find the project's notes.
     for directory in (cwd, *cwd.parents):
         # Prefer the new name at the nearest location; keep legacy notes in place.
-        for name in (".vibe-wise", ".sensible-vibes"):
+        for name in (".vibe-learn", ".vibe-wise", ".sensible-vibes"):
             state = directory / name
             if state.exists() or state.is_symlink():
                 # Stop even if this candidate is invalid. Falling back to a parent
@@ -77,7 +77,7 @@ def restore(payload):
     # Bootstrap from source files instead of emitting partial notes or an incomplete
     # topic index. Output size is independent of the amount of learning history.
     context = (
-        "VibeWise is active for this project. Before responding or coding, load the Learn guide and its referenced behavior instructions:\n"
+        "VibeLearn is active for this project. Before responding or coding, load the Learn guide and its referenced behavior instructions:\n"
         f"{PLUGIN_ROOT / 'skills/learn/SKILL.md'}\n\n"
         f"State directory: {state}\n"
         "Read profile.md and project-map.md there. Search the entire progress.md "
