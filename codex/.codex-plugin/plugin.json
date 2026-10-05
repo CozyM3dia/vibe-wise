@@ -1,0 +1,15 @@
+{
+  "name": "vibe-learn",
+  "version": "0.1.0-codex.1",
+  "description": "Mindful pair programming that keeps you in the driver's seat",
+  "skills": "./skills/",
+  "hooks": "./hooks/hooks.json",
+  "interface": {
+    "displayName": "VibeLearn",
+    "shortDescription": "Mindful pair programming that keeps you in the driver's seat",
+    "developerName": "Noah Kim",
+    "category": "Productivity",
+    "composerIcon": "./assets/vibelearn-icon.png",
+    "logo": "./assets/vibelearn-icon.png"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "name": "vibe-learn",
+  "interface": {
+    "displayName": "VibeLearn"
+  },
+  "plugins": [
+    {
+      "name": "vibe-learn",
+      "source": {
+        "source": "local",
+        "path": "./codex"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

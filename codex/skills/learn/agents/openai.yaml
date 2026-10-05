@@ -1,0 +1,7 @@
+interface:
+  display_name: "VibeLearn"
+  short_description: "Activate or resume learning-first development"
+  default_prompt: "Use $learn to activate or resume learning-first development with VibeLearn for this project."
+
+policy:
+  allow_implicit_invocation: false
