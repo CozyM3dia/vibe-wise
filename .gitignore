@@ -1,0 +1,13 @@
+# Python bytecode & cache
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Codex app-server schema dump (regenerable via codex app-server --dump-schemas)
+docs/design/protocol/
+
+# User notes directory when testing locally
+.vibe-wise/
+.vibe-learn/
+.sensible-vibes/

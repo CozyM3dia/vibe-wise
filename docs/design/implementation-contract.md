@@ -1,0 +1,23 @@
+# VibeWise Codex port contract
+
+User outcome is a native Codex plugin in the cloned VibeWise repository. Installation must be verified with the real Codex CLI. No remote publish, push, merge, or deployment is authorized.
+
+Use a self-contained `codex/` bundle alongside the original Claude package. Keep the existing three-file Markdown state and snapshot-token reset outcomes. Copy the two small Python helpers and adapt only Codex wording in the hook. Do not create a new domain package, dataclasses, forwarding adapters, or generation system. The existing hook module already owns state lookup and activation. Common behavioral fixtures must constrain drift between the two bundles.
+
+The data shape is `profile.md`, `progress.md`, and `project-map.md` under the nearest selected state directory. Each bundle's `restore(payload)` returns the existing JSON context envelope or silence. `reset(cwd, confirmation=None)` keeps the existing preview, no_notes, reset, and error outcomes.
+
+Add `codex/.codex-plugin/plugin.json`, root `.agents/plugins/marketplace.json`, `codex/hooks/hooks.json`, `codex/skills/learn/` and `codex/skills/reset/`, and skill `agents/openai.yaml` files. Preserve explicit invocation for Learn and Reset, matching upstream policy. The Codex manifest points explicitly at its local skills and hook config. The marketplace uses name `vibe-wise-local`, plugin `vibe-wise`, source path `./codex`. Version can be `0.1.43-codex.1`. Preserve original MIT attribution and copy LICENSE into the standalone bundle. Use existing icon assets copied inside the bundle.
+
+Keep teaching policy in the Codex copies of the existing guides. Codex uses available shell/file tools with `rg` and `apply_patch`. Optional preferences can use an available question tool. Required implementation/reset confirmation uses ordinary chat on Codex; never assume request_user_input can authorize writes. Existing user authorization, explicit skips, pause, and direct implementation requests remain respected. Do not activate learning merely because the plugin is installed.
+
+Skill helpers resolve paths relative to the loaded SKILL.md and convert them to actual absolute paths before executing. Hook-only environment variables must not be assumed in ordinary shell calls. Use `python` for the Windows Codex hook and document the Python 3 requirement on other systems. Codex hook uses supported `PLUGIN_ROOT` substitution and quoted paths, with only startup/resume/clear/compact matcher. Leave the original Claude registration and scripts unchanged.
+
+Verification must include real CLI marketplace add/install/list and native app-server skills/list and hooks/list using an isolated temporary CODEX_HOME. Discoverable skills must have explicit-only invocation policy and hooks must be untrusted until the user reviews them. Do not bypass or silently grant global hook trust. Executing registered commands in tests must emulate actual plugin-root substitution for Windows, and use a narrowly inherited environment without secrets. Include paths with spaces.
+
+Run existing hook and reset fixtures against Codex using shared fixtures or narrow test subclasses. If modifying original test harness for portability, resolve its interpreter and plugin-root placeholders as the actual runtime does; do not edit production Claude scripts. Skip actual symlink fixtures only on explicit platform privilege failure, with visible reason. Keep ordinary invalid-file tests running and consider mocked boundary symlink checks where physical fixtures are unavailable. Do not claim a skip proves rejection. Avoid wording snapshots unrelated to a required runtime contract.
+
+Include a rerunnable verification script for structural references and, if practical, real CLI smoke install into temporary CODEX_HOME. Test active/paused restore, nested directories, Git boundaries, pending-decision instructions, unchanged notes, reset preview and stale confirmation, and installed helper execution. Document that automated helper checks do not prove model teaching quality.
+
+Root README should explain both runtime install paths without replacing the original explanation. Add a compact Codex setup guide and validation instructions. Agent-facing prose uses the platform skill-creator guidance, unslop, and technical-writing. No extra comments except non-obvious platform or protocol behavior and API contracts.
+
+Parent alone owns todo.md and synthesis notes. The implementation delegate owns all other needed plugin files in its isolated worktree. It must not edit the main checkout or user's global configuration. Stop after implementation and local checks; report exact results and gaps. Parent reviews, validates installation, and applies the diff to the main checkout.
